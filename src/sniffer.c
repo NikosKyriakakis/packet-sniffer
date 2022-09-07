@@ -160,8 +160,7 @@ int main(int argc, char *argv[])
 
 	// Each captured packet is assigned 
 	// to the "process_packet" callback function
-	// Change the number 3 to capture more packets
-	pcap_loop(pcap_handle, 3, process_packet, NULL);
+	pcap_loop(pcap_handle, -1, process_packet, NULL);
 
 	// Close the sniffer
 	pcap_close(pcap_handle);
