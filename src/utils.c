@@ -28,6 +28,6 @@ void raw_dump(const unsigned char *buffer, const unsigned int size)
 					printf(".");
 			}
 			printf("\n");
-		} // End if
-	} // End for
+		}
+	}
 }
