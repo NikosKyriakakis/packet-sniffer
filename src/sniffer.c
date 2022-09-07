@@ -1,4 +1,6 @@
 #include <pcap.h>
+#include <signal.h>
+#include <stdlib.h>
 
 #include "utils.h"
 #include "net_structs.h"
@@ -6,6 +8,8 @@
 #define READ_TIMEOUT 0
 #define PROMISCUOUS_MODE 1
 #define PACKET_SIZE 4096
+
+pcap_t *pcap_handle;
 
 static void decode_ethernet(const u_char *header_ptr)
 {
@@ -131,8 +135,21 @@ static void process_packet (
 		printf("\nNo captured data\n");
 }
 
+static void signal_handler(int signum)
+{
+	if (signum == SIGINT) {
+		// Close the sniffer
+		printf("Closing sniffer.\n");
+		pcap_close(pcap_handle);
+		exit(EXIT_SUCCESS);		
+	}
+}
+
 int main(int argc, char *argv[])
 {
+	if (signal(SIGINT, signal_handler) == SIG_ERR)
+		fatal("signal", "unable to setup signal handler");
+		
 	// A buffer to be used for error logging
 	char error_buffer[PCAP_ERRBUF_SIZE];
 
@@ -147,7 +164,7 @@ int main(int argc, char *argv[])
 	// Get a handle on the available interface
 	// Also, set it to promiscuous mode 
 	// and disable read timeouts
-	pcap_t *pcap_handle = pcap_open_live (
+	pcap_handle = pcap_open_live (
 		device, 
 		PACKET_SIZE, 
 		PROMISCUOUS_MODE, 
@@ -161,7 +178,4 @@ int main(int argc, char *argv[])
 	// Each captured packet is assigned 
 	// to the "process_packet" callback function
 	pcap_loop(pcap_handle, -1, process_packet, NULL);
-
-	// Close the sniffer
-	pcap_close(pcap_handle);
 }
