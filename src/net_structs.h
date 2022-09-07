@@ -1,3 +1,6 @@
+#ifndef NET_STRUCTS_H
+#define NET_STRUCTS_H
+
 #define ETHER_ADDR_LEN 6
 #define ETHER_HDR_LEN 14
 
@@ -39,3 +42,5 @@ struct tcp_hdr {
 	unsigned short tcp_checksum; // TCP checksum
 	unsigned short tcp_urgent; // TCP urgent pointer
 };
+
+#endif
